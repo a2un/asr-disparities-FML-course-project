@@ -40,6 +40,19 @@ def wer_calc(transcripts, human_clean_col, asr_clean_col):
         new_transcripts[col+"_wer"] = wer_list
     return new_transcripts
 
+def cer_calc(transcripts, human_clean_col, asr_clean_col):
+    # Calculate Character Error Rate (Levenshtein distance)
+    new_transcripts = transcripts.copy()
+    ground_truth = transcripts[human_clean_col].tolist()
+    for col in asr_clean_col:
+        new_transcripts[col] = new_transcripts[col].replace(np.nan, '', regex=True)
+        asr_trans = new_transcripts[col].tolist()
+        cer_list = []
+        for i in range(len(ground_truth)):
+            cer_list.append(wer(ground_truth[i], asr_trans[i]))
+        new_transcripts[col+"_cer"] = cer_list
+    return new_transcripts
+
 if __name__ == '__main__':  
 
     # Apply cleaning rules
